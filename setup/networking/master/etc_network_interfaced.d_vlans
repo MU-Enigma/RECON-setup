@@ -1,0 +1,4 @@
+# To be appended to /etc/network/interfaces.d/vlans 
+auto eth0.10
+iface eth0.10 inet manual
+ 	vlan-raw-device eth0
