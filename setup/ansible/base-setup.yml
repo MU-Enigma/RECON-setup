@@ -1,0 +1,81 @@
+---
+- hosts: nodes
+  name: nodes
+  become: yes
+  tasks:
+  - name: add user turing
+    user:
+      name: turing
+      # python -c "from passlib.hash import sha512_crypt; import getpass; print(sha512_crypt.using(rounds=5000).hash(getpass.getpass()))"
+      password: $1$5X.x.x.x$5X.x.x.x
+      state: present
+      groups:
+        - sudo
+      shell: /bin/bash
+      home: /home/turing
+      createhome: yes
+      system: yes
+      
+  - name: add ssh key
+    authorized_key:
+      user: turing
+      key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+      state: present
+      
+  - name: update apt
+    apt:
+      update_cache: yes
+
+  - name: update pi
+    apt:
+      upgrade: yes
+      update_cache: yes
+  
+  - name: Install base packages
+    apt:
+      pkg:
+        - vim-tiny
+        - vim
+        - nano
+        - htop
+        - git
+        - curl
+        - wget
+        - tmux
+      state: latest
+      update_cache: true
+
+   - name: stop avahi-daemon
+    systemd:
+      name: avahi-daemon
+      state: stopped
+
+  - name: Disable password login
+    lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication" line="PasswordAuthentication no" state=present
+    notify:
+      - restart sshd
+
+  - name: reboot server
+    reboot:
+      msg: "Reboot Initiated"
+      connect_timeout: 5
+      reboot_timeout: 600
+      pre_reboot_delay: 0
+      post_reboot_delay: 0
+      test_command: uptime
+
+  - name: disable root login
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: "^PermitRootLogin"
+      line: "PermitRootLogin no"
+      state: present
+      backup: yes
+
+  - name: yeet user pi
+    user:
+      name: pi
+      state: absent
+      remove: yes 
+      force: yes
+
