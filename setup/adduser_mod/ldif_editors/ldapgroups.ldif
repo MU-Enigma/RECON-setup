@@ -1,0 +1,5 @@
+dn: cn=theUsername,ou=groups,dc=senpai
+objectClass: posixGroup
+cn: theUsername
+gidNumber: theGID
+memberUid: theUsername

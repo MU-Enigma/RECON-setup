@@ -1,0 +1,12 @@
+# Some fucntions to be run during new user creation
+# Author: Srikar (aka epoch101)
+
+# $1 - username 
+# $2 - uid
+# $3 - gid
+# $4 - home-dir
+
+# Add user to LDAP
+
+# Modify home-dir perms
+

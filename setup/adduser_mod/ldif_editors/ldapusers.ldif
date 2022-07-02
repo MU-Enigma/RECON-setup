@@ -1,0 +1,11 @@
+dn: uid=theUsername,ou=users,dc=senpai
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: theUsername
+sn: Enigma
+userPassword: thePassword
+loginShell: /bin/bash
+uidNumber: theUID
+gidNumber: theGID
+homeDirectory: /home/theUsername
