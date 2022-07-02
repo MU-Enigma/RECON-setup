@@ -32,10 +32,10 @@ sed -i "s/theUsername/$1/g" temp-ldapgroups.ldif
 sed -i "s/theGID/$3/g" temp-ldapgroups.ldif
 
 # Add the updated user file to LDAP database
-ldapadd -x -D cn=admin,dc=senpai -W -f temp-ldapusers.ldif
+ldapadd -x -D cn=admin,dc=senpai -w $(cat /etc/pam_ldap.conf) -f temp-ldapusers.ldif
 
 # Add the updated usergroup file to LDAP database
-ldapadd -x -D cn=admin,dc=senpai -W -f temp-ldapgroups.ldif
+ldapadd -x -D cn=admin,dc=senpai -w $(cat /etc/pam_ldap.conf) -f temp-ldapgroups.ldif
 
 # Remove all the modified files, ready the dir for next useradd :)
 rm -fr temp-*
