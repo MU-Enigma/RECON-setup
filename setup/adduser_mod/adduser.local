@@ -1,3 +1,4 @@
+# File to be placed in /usr/local/sbin/
 # Some fucntions to be run during new user creation
 # Author: Srikar (aka epoch101)
 
@@ -6,8 +7,10 @@
 # $3 - gid
 # $4 - home-dir
 
+MOD_DIR=/usr/local/sbin/adduser_mod
+
 # Add user to LDAP
-/usr/local/sbin/ldif_editors/genLDIF.sh $1 $2 $3
+$MOD_DIR/ldif_editors/genLDIF.sh $1 $2 $3
 
 # Generate and add ssh-keys for new user
-/usr/local/sbin/ssh-keymgmt/gen_newuser_keys.sh $1 $2 $3
+$MOD_DIR/ssh-keymgmt/gen_newuser_keys.sh $1 $2 $3

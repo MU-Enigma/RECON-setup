@@ -1,3 +1,6 @@
+# File to be placed in /usr/local/sbin/adduser_mod/ldif_editors
+# Base LDIF group format
+# Author: Srikar (aka epoch101)
 dn: cn=theUsername,ou=groups,dc=senpai
 objectClass: posixGroup
 cn: theUsername

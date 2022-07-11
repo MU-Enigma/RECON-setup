@@ -1,3 +1,6 @@
+# File to be placed in /usr/local/sbin/adduser_mod/ldif_editors
+# Base LDIF user format
+# Author: Srikar (aka epoch101)
 dn: uid=theUsername,ou=users,dc=senpai
 objectClass: inetOrgPerson
 objectClass: posixAccount

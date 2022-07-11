@@ -1,3 +1,4 @@
+# File to be placed in /usr/local/sbin/adduser_mod/ssh-keymgmt
 # Script to :
 #	1. Get user input for custom keys and add them to authorized_keys
 #	2. Generate new set of keys for inter-node access in the cluster
@@ -27,7 +28,7 @@ read user_sshkeys
 # Adding user keys to username for easy access
 echo $user_sshkeys >> $SSH_DIR/authorized_keys
 
-echo "Added keys for user $1\!"
+echo "Added keys for user $1!"
 
 # Changing file permissions to ensure proper access
 chown -R $2:$3 $SSH_DIR
