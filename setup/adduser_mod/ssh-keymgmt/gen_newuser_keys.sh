@@ -8,7 +8,7 @@
 # $3 - GI
 # SSH_DIR - /home/$1/.ssh
 
-SSH_DIR = /home/$1/.ssh
+SSH_DIR=/home/$1/.ssh
 
 # Making a new ssh directory
 mkdir $SSH_DIR
@@ -25,7 +25,9 @@ echo -n "Enter user's SSH keys: "
 read user_sshkeys
 
 # Adding user keys to username for easy access
-echo user_sshkeys >> $SSH_DIR/authorized_keys
+echo $user_sshkeys >> $SSH_DIR/authorized_keys
+
+echo "Added keys for user $1\!"
 
 # Changing file permissions to ensure proper access
 chown -R $2:$3 $SSH_DIR
