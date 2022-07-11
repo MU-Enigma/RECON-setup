@@ -7,6 +7,7 @@
 # $4 - home-dir
 
 # Add user to LDAP
+/usr/local/sbin/ldif_editors/genLDIF.sh $1 $2 $3
 
-# Modify home-dir perms
-
+# Generate and add ssh-keys for new user
+/usr/local/sbin/ssh-keymgmt/gen_newuser_keys.sh $1 $2 $3
