@@ -1,5 +1,5 @@
 # File to be placed in /usr/local/sbin/
-# Some fucntions to be run during new user creation
+# Some functions to be run during new user creation
 # Author: Srikar (aka epoch101)
 
 # $1 - username 
