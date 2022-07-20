@@ -16,14 +16,20 @@ if ! [ -n "$1" ]; then
 	exit
 fi
 
+# TODO: Check if the username is in right format using REGEX
+
 # Check if the script is running as root
 if [ "$USER" != "root" ]; then
 	echo "Script not running as root, exiting..."
 	exit
 fi
 
+# Input user full name
+echo -n "Enter full name of the user: "
+read FULL_USERNAME
+
 # Create new user with home directory
-useradd -m $1
+useradd -m $1 --comment $FULL_USERNAME
 
 # Change home permission to 750 for increased privacy
 chmod 750 /home/$1
