@@ -1,4 +1,4 @@
-# File to be placed in /usr/local/sbin/adduser_mod/ssh-keymgmt
+# File to be placed in /usr/local/sbin/useradd_mod/ssh-keymgmt
 # Script to :
 #	1. Get user input for custom keys and add them to authorized_keys
 #	2. Generate new set of keys for inter-node access in the cluster

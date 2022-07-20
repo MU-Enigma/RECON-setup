@@ -1,0 +1,31 @@
+# File to be placed in /usr/local/sbin/
+# Custom script to be run when deleting users on RECON
+# Author: Srikar (aka epoch101)
+
+# $1 - username
+
+MOD_DIR=/usr/local/sbin/userdel_mod
+
+# Check if the username was provided
+if ! [ -n "$1" ]; then
+	echo "No username provided, exiting..."
+	exit
+fi
+
+# Check if the script is running as root
+if [ "$USER" != "root" ]; then
+	echo "Script not running as root, exiting..."
+	exit
+fi
+
+# Get user's UID and GID
+UID=$(id $1 -u)
+GID=$(id $1 -g)
+
+# Delete the user:
+#	-f to force delete user even when logged in
+#	-r to remove the home directory
+userdel -fr $1
+
+# Delete user from LDAP
+$MOD_DIR/rm_ldap.sh $1 $UID $GID
