@@ -1,0 +1,31 @@
+# File to be placed in /usr/local/sbin/
+# Custom script to onboard new users onto RECON
+# Funtions:
+#	- Create new user with home directory and passwordless login
+# 	- Generate and add new SSH keys for inter-node access
+# 	- Add user SSH keys for authentication.
+# Author: Srikar (aka epoch101)
+
+# $1 - username
+
+# TODO: Check if the command was invoked in the right way using regex
+
+MOD_DIR=/usr/local/sbin/useradd_mod
+
+# Create new user with home directory
+useradd -m $1
+
+# Change home permission to 750 for increased privacy
+chmod 750 /home/$1
+
+# Get new UID and GID
+UID=$(id $1 -u)
+GID=$(id $1 -g)
+
+# Add user to LDAP
+$MOD_DIR/ldif_editors/genLDIF.sh $1 $UID $GID
+
+# TODO: Get all groups the user belongs to add to LDAP
+
+# Generate and add ssh-keys for new user
+$MOD_DIR/ssh-keymgmt/gen_newuser_keys.sh $1 $UID $GID

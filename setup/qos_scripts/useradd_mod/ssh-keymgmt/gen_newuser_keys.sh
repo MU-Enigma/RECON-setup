@@ -6,7 +6,7 @@
 
 # $1 - username
 # $2 - UID
-# $3 - GI
+# $3 - GID
 # SSH_DIR - /home/$1/.ssh
 
 SSH_DIR=/home/$1/.ssh
