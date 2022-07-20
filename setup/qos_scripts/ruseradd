@@ -8,9 +8,19 @@
 
 # $1 - username
 
-# TODO: Check if the command was invoked in the right way using regex
-
 MOD_DIR=/usr/local/sbin/useradd_mod
+
+# Check if the username was provided
+if ! [ -n "$1" ]; then
+	echo "No username provided, exiting..."
+	exit
+fi
+
+# Check if the script is running as root
+if [ "$USER" != "root" ]; then
+	echo "Script not running as root, exiting..."
+	exit
+fi
 
 # Create new user with home directory
 useradd -m $1
