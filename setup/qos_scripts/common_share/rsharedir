@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for hdir in /home/*
+do 
+	cd $hdir
+	user=$(basename `pwd`)
+	rsync -a /home/turing/share $hdir/.
+	chown -R  $user:$user $hdir/share
+done
