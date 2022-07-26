@@ -14,4 +14,4 @@ ldapdelete -x -D cn=admin,dc=senpai -w $(cat /etc/pam_ldap.conf) uid=$1,ou=users
 echo "Removing LDAP entry: cn=$1,ou=groups,dc=senpai"
 ldapdelete -x -D cn=admin,dc=senpai -w $(cat /etc/pam_ldap.conf) cn=$1,ou=groups,dc=senpai
 
-# TODO: Delete other group entries as well
+# TODO: Delete other group entries as well (check sudo memberID)
