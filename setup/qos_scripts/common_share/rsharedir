@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Author: Gurram Siddarth Reddy
+# Last modified: 29th July, 2022
+# Description: this script syncs /home/turing/share and /home/$(user)/share
+# Path: /usr/local/sbin
+# Relative_path: qos_scripts/common_share/rsharedir
+ 
+for hdir in /home/*
+do 
+	cd $hdir
+	user=$(basename `pwd`) # getting username
+	rsync -a /home/turing/share $hdir/. # syncing turing share with user share
+	chown -R --verbose $user:$user $hdir/share # modifying file permissions for user accessibilty
+done
