@@ -1,10 +1,13 @@
 #!/bin/bash
 
+# File to be placed in /usr/local/sbin/
+# Description: this script syncs /home/turing/share and /home/$(user)/share
+# Funtions:
+#	- getting username
+# 	- syncing turing share with user share
+# 	- modifying file permissions for user accessibilty
 # Author: Gurram Siddarth Reddy
 # Last modified: 29th July, 2022
-# Description: this script syncs /home/turing/share and /home/$(user)/share
-# Path: /usr/local/sbin
-# Relative_path: qos_scripts/common_share/rsharedir
  
 for hdir in /home/*
 do 
