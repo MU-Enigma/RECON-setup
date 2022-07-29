@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# File to be placed in /usr/local/sbin/
+# Description: this script syncs /home/turing/share and /home/$(user)/share
+# Funtions:
+#	- getting username
+# 	- syncing turing share with user share
+# 	- modifying file permissions for user accessibilty
+# Author: Gurram Siddarth Reddy
+# Last modified: 29th July, 2022
+ 
+for hdir in /home/*
+do 
+	cd $hdir
+	user=$(basename `pwd`) # getting username
+	rsync -a /home/turing/share $hdir/. # syncing turing share with user share
+	chown -R --verbose $user:$user $hdir/share # modifying file permissions for user accessibilty
+done
