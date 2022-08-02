@@ -21,7 +21,8 @@ sed -i "s/theGID/$3/g" temp-ldapusers.ldif
 cp ldapgroups.ldif temp-ldapgroups.ldif
 
 # Add user group details in temp user group ldif
-sed -i "s/theUsername/$1/g" temp-ldapgroups.ldif
+sed -i "s/theGroupName/$1/g" temp-ldapgroups.ldif
+sed -i "s/theMemberUid/$1/g" temp-ldapgroups.ldif
 sed -i "s/theGID/$3/g" temp-ldapgroups.ldif
 
 # Add the updated user file to LDAP database

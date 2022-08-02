@@ -1,9 +1,13 @@
-#       1. Get all the user groups the user is in
-#       2. Check if the user's groups are in sync with LDAP groups
-#       3. Add or remove users from respective LDAP entries if not in sync
+# File to be placed in /usr/local/sbin/
+# Script to:
+# 	1. Get all the user groups the user is in
+# 	2. Check if the user's groups are in sync with LDAP groups
+# 	3. Add or remove users from respective LDAP entries if not in sync
 # Author: Srikar (aka epoch101)
 
 # $1 - username
+
+MOD_DIR=/usr/local/sbin/useradd_mod
 
 # Check if the username was provided
 if ! [ -n "$1" ]; then
@@ -55,18 +59,26 @@ do
 		# If user not in the GROUP_QUERY, modify LDAP to add them
 		# if not GROUP_QUERY or not FOUND, do an LDAP modify to add user
 		if ! [ -n "$GROUP_QUERY" ] || [ $FOUND -eq 0 ]; then
-				echo "Add user $1 in $gid"
-				# ldapmodify -x -D cn=admin,dc=senpai -W dn: cn=<replaceWithGroupName>,ou=groups,dc=senpai changetype: modify add: memberUid
+				$MOD_DIR/usermod_mod/add_usergroup_ldap.sh $1 $gid
 		fi
 done
 
 # TODO: If a user is NOT in a group, remove from LDAP entry
 
+# TODO: iterate through all LDAP groups, run ldapsearch
+# if user is in gid, but not in id -G, delete from ldap
+
 # Get all groups
 # check memberUid. If user found, check if that user has the GID, else modify LDAP record
 
-#LDAPmodify query:
+# LDAPmodify query:
 # dn: cn=sudo,ou=groups,dc=senpai
-#changetype: modify
-#add: memberUid
-#memberUid: ltest
+# changetype: modify
+# add: memberUid
+# memberUid: ltest
+
+# LDAPdelete query
+# dn: cn=sudo,ou=groups,dc=senpai
+# changetype: modify
+# delete: memberUid
+# memberUid: ltest
