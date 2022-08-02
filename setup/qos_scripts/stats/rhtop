@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# File to be placed in /usr/local/sbin/
+# Description: this script runs htop on all nodes simultaneously
+# Funtions:
+# 	- Creates a Tmux session named rhtop
+#   - Split the tmux session into 8 equal tmux sessions and connect to all nodes
+# 	- Turn on Pane Synchronization
+# Author: Gurram Siddarth Reddy
+# Last modified: 29th July, 2022
+
+tmux \
+new-session -d -s rhtop ssh node-0\; \
+split-window \
+ssh node-1\; \
+split-window -h \
+ssh node-2\; \
+split-window \
+ssh node-3\; \
+select-layout even-horizontal\; \
+select-pane -t 0 \; \
+split-window  -v \
+ssh node-4\; \
+select-pane -t 2 \; \
+split-window  -v \
+ssh node-5\; \
+select-pane -t 4 \; \
+split-window  -v \
+ssh node-6\; \
+select-pane -t 6 \; \
+split-window  -v \
+ssh node-7\; \
+
+#enabling pane-synchronization
+tmux set-window-option -t rhtop:0 synchronize-panes on
+#running htop
+tmux send-keys -t rhtop "htop" Enter
+
+tmux attach -t rhtop
