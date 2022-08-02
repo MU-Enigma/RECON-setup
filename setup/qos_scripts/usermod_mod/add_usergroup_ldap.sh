@@ -1,3 +1,4 @@
+#!/bin/bash
 # File to be placed in /usr/local/sbin/usermod_mod
 # Script to :
 # 	1. Check if a group exists in the LDAP database and create if not

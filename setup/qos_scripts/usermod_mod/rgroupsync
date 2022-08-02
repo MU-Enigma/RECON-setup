@@ -1,3 +1,4 @@
+#!/bin/bash
 # File to be placed in /usr/local/sbin/
 # Script to:
 # 	1. Get all the user groups the user is in
@@ -7,7 +8,7 @@
 
 # $1 - username
 
-MOD_DIR=/usr/local/sbin/useradd_mod
+MOD_DIR=/usr/local/sbin/usermod_mod
 
 # Check if the username was provided
 if ! [ -n "$1" ]; then
@@ -29,19 +30,19 @@ if ! id "$1" >/dev/null; then
 		exit
 fi
 
-GID_LIST=$(id -G $1)
+# Getting all the groups the user is a part of
+UGID_LIST=$(id -G $1)
 
-for gid in $GID_LIST
+# Iterating through the list of groups
+for gid in $UGID_LIST
 do
 		# Skip checking for UID
 		if [ $gid -eq $(id "$1" -u) ];then
-				echo "Skipping ID $gid, same as UID!"
 				continue
 		fi
 
 		FOUND=0
 		GROUP_QUERY=$(ldapsearch -x -D cn=admin,dc=senpai -b ou=groups,dc=senpai -w $(cat /etc/pam_ldap.conf) gidNumber=$gid memberUid | grep memberUid:)
-
 
 		if [ -n "$GROUP_QUERY" ];then
 
@@ -59,17 +60,48 @@ do
 		# If user not in the GROUP_QUERY, modify LDAP to add them
 		# if not GROUP_QUERY or not FOUND, do an LDAP modify to add user
 		if ! [ -n "$GROUP_QUERY" ] || [ $FOUND -eq 0 ]; then
-				$MOD_DIR/usermod_mod/add_usergroup_ldap.sh $1 $gid
+				gName=$(getent group $gid | sed 's/:.*//')
+				
+				# Announcing the same
+				echo "Adding user $1 to $gName"
+
+				# Adding the user to group entry
+				$MOD_DIR/add_usergroup_ldap.sh $1 $gid
 		fi
 done
 
-# TODO: If a user is NOT in a group, remove from LDAP entry
 
-# TODO: iterate through all LDAP groups, run ldapsearch
-# if user is in gid, but not in id -G, delete from ldap
+# Remove entries that are not needed from LDAP
 
-# Get all groups
-# check memberUid. If user found, check if that user has the GID, else modify LDAP record
+# Getting all the groups in LDAP
+LDAP_GRPS_LIST=$(ldapsearch -x -D cn=admin,dc=senpai -b ou=groups,dc=senpai -w $(cat /etc/pam_ldap.conf) memberUid=$1 gidNumber | grep gidNumber:)
+LDAP_GRPS_LIST=$(echo $LDAP_GRPS_LIST | sed -e "s/gidNumber://g")
+
+# Iterate through all the results
+if [ -n "$LDAP_GRPS_LIST" ];then
+	for lgroup in $LDAP_GRPS_LIST
+	do
+		# Skip checking for UID
+		if [ $lgroup -eq $(id "$1" -u) ];then
+				continue
+		fi
+
+		# If a group is not in the list of groups, then delete from LDAP entry
+		if ! [[ $(id "$1" -G) == *"$lgroup"* ]]; then
+			# Getting the group name
+			gName=$(getent group $lgroup | sed 's/:.*//')
+			
+			# Announcing the same
+			echo "Removing user $1 from $gname"
+			
+			# Removing user entry from a specific group
+			echo "dn: cn=$gName,ou=groups,dc=senpai
+			changetype: modify
+			delete: memberUid
+			memberUid: $1" | ldapmodify -x -D cn=admin,dc=senpai -w $(cat /etc/pam_ldap.conf)
+		fi
+	done
+fi
 
 # LDAPmodify query:
 # dn: cn=sudo,ou=groups,dc=senpai
