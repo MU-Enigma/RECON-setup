@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# File to be placed in /usr/local/sbin/
+# Description: this script parses number of user logins in a month to a json file
+# Funtions:
+# 	- gets the number of user logins in a month
+# 	- parses the number of user logins in a month to a json file
+# Author: Gurram Siddarth Reddy
+# Last modified: 3rd Aug, 2022
+
+last --since "$(date +'%Y-%m-01')" |
+    awk '!/^reboot/ && !/^wtmp / && /./{
+        date=$5" "$6;
+        a[date]++
+       }
+       END{
+	printf "{\n"
+        for(date in a){
+            printf "	\"%s\" : \"%d\"\n",date,a[date]
+        }
+       }'| sort -nk2
+printf "}\n"
