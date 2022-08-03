@@ -1,3 +1,4 @@
+#!/bin/bash
 # File to be placed in /usr/local/sbin/
 # Custom script to onboard new users onto RECON
 # Funtions:
@@ -40,8 +41,6 @@ GID=$(id $1 -g)
 
 # Add user to LDAP
 $MOD_DIR/ldif_editors/genLDIF.sh $1 $UID $GID
-
-# TODO: Get all groups the user belongs to add to LDAP
 
 # Generate and add ssh-keys for new user
 $MOD_DIR/ssh-keymgmt/gen_newuser_keys.sh $1 $UID $GID

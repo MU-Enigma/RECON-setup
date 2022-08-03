@@ -1,3 +1,4 @@
+#!/bin/bash
 # File to be placed in /usr/local/sbin/
 # Custom script to be run when deleting users on RECON
 # Author: Srikar (aka epoch101)
@@ -9,6 +10,12 @@ MOD_DIR=/usr/local/sbin/userdel_mod
 # Check if the username was provided
 if ! [ -n "$1" ]; then
 	echo "No username provided, exiting..."
+	exit
+fi
+
+# Check if the username exists
+if ! id "$1" &>/dev/null; then
+	echo "User $1 not found, exiting..."
 	exit
 fi
 

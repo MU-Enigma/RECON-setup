@@ -1,3 +1,4 @@
+#!/bin/bash
 # File to be placed in /usr/local/sbin/useradd_mod/ldif_editors
 # Script to generate valid ldif for a new user
 # Author: Srikar (aka epoch101)
