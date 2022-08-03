@@ -1,11 +1,13 @@
 #!/bin/bash
+
 # File to be placed in /usr/local/sbin/
 # Custom script to onboard new users onto RECON
 # Funtions:
 #	- Create new user with home directory and passwordless login
 # 	- Generate and add new SSH keys for inter-node access
 # 	- Add user SSH keys for authentication.
-# Author: Srikar (aka epoch101)
+# Author: Srikar (aka epoch101),Gurram Siddarth Reddy
+# Last modified: 4th Aug, 2022
 
 # $1 - username
 
@@ -17,7 +19,17 @@ if ! [ -n "$1" ]; then
 	exit
 fi
 
-# TODO: Check if the username is in right format using REGEX
+isValidUsername() {
+  local re='^[[:lower:]_][[:lower:][:digit:]_-]{2,15}$'
+  (( ${#1} > 16 )) && return 1
+  [[ $1 =~ $re ]] # return value of this comparison is used for the function
+}
+
+if not isValidUsername "$1"; then
+	echo "Invalid username, exiting..."
+	exit
+fi
+
 
 # Check if the script is running as root
 if [ "$USER" != "root" ]; then
@@ -41,6 +53,8 @@ GID=$(id $1 -g)
 
 # Add user to LDAP
 $MOD_DIR/ldif_editors/genLDIF.sh $1 $UID $GID
+
+# TODO: Get all groups the user belongs to add to LDAP
 
 # Generate and add ssh-keys for new user
 $MOD_DIR/ssh-keymgmt/gen_newuser_keys.sh $1 $UID $GID
