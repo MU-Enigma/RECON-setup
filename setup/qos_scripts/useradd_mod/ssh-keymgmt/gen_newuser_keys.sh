@@ -1,3 +1,4 @@
+#!/bin/bash
 # File to be placed in /usr/local/sbin/useradd_mod/ssh-keymgmt
 # Script to :
 #	1. Get user input for custom keys and add them to authorized_keys

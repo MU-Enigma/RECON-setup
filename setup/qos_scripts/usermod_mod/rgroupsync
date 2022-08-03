@@ -16,7 +16,11 @@ if ! [ -n "$1" ]; then
 		exit
 fi
 
-# TODO: Check if the username is in right format using REGEX
+# Check if the username exists
+if ! id "$1" &>/dev/null; then
+	echo "User $1 not found, exiting..."
+	exit
+fi
 
 # Check if the script is running as root
 if [ "$USER" != "root" ]; then
@@ -61,9 +65,6 @@ do
 		# if not GROUP_QUERY or not FOUND, do an LDAP modify to add user
 		if ! [ -n "$GROUP_QUERY" ] || [ $FOUND -eq 0 ]; then
 				gName=$(getent group $gid | sed 's/:.*//')
-				
-				# Announcing the same
-				echo "Adding user $1 to $gName"
 
 				# Adding the user to group entry
 				$MOD_DIR/add_usergroup_ldap.sh $1 $gid
@@ -73,7 +74,7 @@ done
 
 # Remove entries that are not needed from LDAP
 
-# Getting all the groups in LDAP
+# Getting all the groups the user is a part of in LDAP
 LDAP_GRPS_LIST=$(ldapsearch -x -D cn=admin,dc=senpai -b ou=groups,dc=senpai -w $(cat /etc/pam_ldap.conf) memberUid=$1 gidNumber | grep gidNumber:)
 LDAP_GRPS_LIST=$(echo $LDAP_GRPS_LIST | sed -e "s/gidNumber://g")
 
@@ -90,9 +91,6 @@ if [ -n "$LDAP_GRPS_LIST" ];then
 		if ! [[ $(id "$1" -G) == *"$lgroup"* ]]; then
 			# Getting the group name
 			gName=$(getent group $lgroup | sed 's/:.*//')
-			
-			# Announcing the same
-			echo "Removing user $1 from $gname"
 			
 			# Removing user entry from a specific group
 			echo "dn: cn=$gName,ou=groups,dc=senpai
