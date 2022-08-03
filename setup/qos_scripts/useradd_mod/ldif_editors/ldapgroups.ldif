@@ -1,8 +1,8 @@
 # File to be placed in /usr/local/sbin/useradd_mod/ldif_editors
 # Base LDIF group format
 # Author: Srikar (aka epoch101)
-dn: cn=theUsername,ou=groups,dc=senpai
+dn: cn=theGroupName,ou=groups,dc=senpai
 objectClass: posixGroup
-cn: theUsername
+cn: theGroupName
 gidNumber: theGID
-memberUid: theUsername
+memberUid: theMemberUid
