@@ -1,11 +1,13 @@
 #!/bin/bash
+
 # File to be placed in /usr/local/sbin/
 # Custom script to onboard new users onto RECON
 # Funtions:
 #	- Create new user with home directory and passwordless login
 # 	- Generate and add new SSH keys for inter-node access
 # 	- Add user SSH keys for authentication.
-# Author: Srikar (aka epoch101)
+# Author: Srikar (aka epoch101),Gurram Siddarth Reddy
+# Last modified: 4th Aug, 2022
 
 # $1 - username
 
@@ -17,7 +19,14 @@ if ! [ -n "$1" ]; then
 	exit
 fi
 
-# TODO: Check if the username is in right format using REGEX
+valid='s[1-9][0-9][meca][semi][0-9][0-9][0-9]' # regex for valid username
+if [[ ! $1 =~ $valid ]]; then
+	echo "Invalid username, exiting..."
+	exit # exit if the username is invalid
+else
+	echo "Valid username, proceeding..."
+fi
+
 
 # Check if the script is running as root
 if [ "$USER" != "root" ]; then
