@@ -46,6 +46,8 @@ do
 		fi
 
 		FOUND=0
+
+		# Getting all the members for a given GID
 		GROUP_QUERY=$(ldapsearch -x -D cn=admin,dc=senpai -b ou=groups,dc=senpai -w $(cat /etc/pam_ldap.conf) gidNumber=$gid memberUid | grep memberUid:)
 
 		if [ -n "$GROUP_QUERY" ];then
@@ -53,7 +55,6 @@ do
 				GROUPS=$(echo $GROUP_QUERY | sed -e "s/memberUid://g")
 				for member in $GROUPS
 				do
-						echo $member
 						if [ "$member" = "$1" ]; then
 								FOUND=1
 								break

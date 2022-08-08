@@ -26,8 +26,8 @@ if [ "$USER" != "root" ]; then
 fi
 
 # Get user's UID and GID
-UID=$(id $1 -u)
-GID=$(id $1 -g)
+rUID=$(id $1 -u)
+rGID=$(id $1 -g)
 
 # Delete the user:
 #	-f to force delete user even when logged in
@@ -35,4 +35,4 @@ GID=$(id $1 -g)
 userdel -fr $1
 
 # Delete user from LDAP
-$MOD_DIR/rm_ldap.sh $1 $UID $GID
+$MOD_DIR/rm_ldap.sh $1 $rUID $rGID
