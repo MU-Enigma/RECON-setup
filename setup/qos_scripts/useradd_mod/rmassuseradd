@@ -1,0 +1,74 @@
+#! /bin/bash
+
+read -p "Please Enter Path: " csvpath
+echo $csvpath
+while IFS="" read -r data || [ -n "$data" ]
+do
+	userid=$(printf '%s\n' "$data" | cut -d\, -f1)
+	user_name=$(printf '%s\n' "$data" | cut -d\, -f2)
+	ssh_key=$(printf '%s\n' "$data" | cut -d\, -f3)
+	MOD_DIR=/usr/local/sbin/useradd_mod
+
+	# Check if the username was provided
+	if ! [ -n "$userid" ]; then
+		echo "No username located, exiting..."
+		exit
+	fi
+
+	if ! [ -n "$user_name" ]; then
+		echo "No name located, exiting..."
+		exit
+	fi
+
+	if ! [ -n "$ssh_key" ]; then
+		echo "No SSH key located, exiting..."
+		exit
+	fi
+
+	valid='s[1-9][0-9][meca][semi][0-9][0-9][0-9]' # regex for valid username
+	if [[ ! $userid =~ $valid ]]; then
+		echo "Invalid username, exiting..."
+		exit	# exit if the username is invalid
+	fi
+
+
+	# Check if the script is running as root
+	if [ "$USER" != "root" ]; then
+		echo "Script not running as root, exiting..."
+		exit
+	fi
+
+	# Create new user with home directory
+	useradd -m $userid --comment "$user_name"
+
+	# Change home permission to 750 for increased privacy
+	chmod 750 /home/$userid
+
+	# Get new UID and GID
+	rUID=$(id $userid -u)
+	rGID=$(id $userid -g)
+
+	# Add user to LDAP
+	$MOD_DIR/ldif_editors/genLDIF.sh $userid $rUID $rGID
+
+	# Generate and add ssh-keys for new user
+	SSH_DIR=/home/$userid/.ssh
+
+	# Making a new ssh directory
+	mkdir $SSH_DIR
+	chmod 700 $SSH_DIR
+
+	# Generating new keys
+	ssh-keygen -t ed25519 -f $SSH_DIR/id_ed25519 -q -N ""
+
+	# Adding the public key of new keys for inter-node access
+	cat $SSH_DIR/id_ed25519.pub > $SSH_DIR/authorized_keys
+
+	# Adding user keys to username for easy access
+	echo $ssh_key >> $SSH_DIR/authorized_keys
+
+	echo "Added keys for user $userid!"
+
+	# Changing file permissions to ensure proper access
+	chown -R $rUID:$rGID $SSH_DIR
+done < $csvpath
