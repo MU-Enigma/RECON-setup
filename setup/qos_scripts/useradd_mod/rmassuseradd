@@ -1,4 +1,13 @@
 #! /bin/bash
+# File to be placed in /usr/local/sbin/
+# Custom script to onboard new users onto RECON via a CSV file
+# Funtions:
+#	- Parses a CSV file
+#	- Create new user with home directory and passwordless login for every entry
+# 	- Generate and add new SSH keys for cross-node access
+# 	- Add user SSH keys for authentication.
+# Author: Gurram Siddarth Reddy
+# Last modified: 24th Aug, 2022
 
 read -p "Please Enter Path: " csvpath
 echo $csvpath
