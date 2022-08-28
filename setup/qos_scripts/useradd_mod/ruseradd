@@ -12,8 +12,17 @@
 # $1 - username
 # $2 - ssh key
 # $3 - Name of the user
+# $4 - group of the user
 
 MOD_DIR=/usr/local/sbin/useradd_mod
+
+if id "$1" &>/dev/null; then
+    echo 'user found'
+	echo 'quitting...'
+	exit
+else
+    echo "creating user $1 with username $3"
+fi
 
 # Check if the username was provided
 if ! [ -n "$1" ]; then
@@ -35,7 +44,7 @@ else
 	FULL_USERNAME=$3
 fi
 
-student='s[1-9][0-9][meca][semi][0-9][0-9][0-9]' # regex for valid student username
+student='s[1-9][0-9][meca][semic][0-9][0-9][0-9]' # regex for valid student username
 faculty='f[0-9][0-9][0-9][0-9]' # regex for valid faculty ID
 if [[ ! $1 =~ $student && ! $1 =~ $faculty ]]; then
 	echo "Invalid username, exiting..."
@@ -58,6 +67,9 @@ chmod 750 /home/$1
 # Get new UID and GID
 rUID=$(id $1 -u)
 rGID=$(id $1 -g)
+
+#adding the user to the given group
+uaermod -aG $4 $1
 
 # Add user to LDAP
 $MOD_DIR/ldif_editors/genLDIF.sh $1 $rUID $rGID
