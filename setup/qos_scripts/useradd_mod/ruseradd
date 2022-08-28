@@ -10,6 +10,8 @@
 # Last modified: 4th Aug, 2022
 
 # $1 - username
+# $2 - ssh key
+# $3 - Name of the user
 
 MOD_DIR=/usr/local/sbin/useradd_mod
 
@@ -18,9 +20,24 @@ if ! [ -n "$1" ]; then
 	echo "No username provided, exiting..."
 	exit
 fi
+if [ "$2" = "" ]; then                 # If ssh key is an empty string,
+    # Getting SSH keys from user
+    echo -n "Enter user's SSH keys: "
+    read ssh_key
+else                                      # Otherwise,
+	ssh_key=$2
+fi
+if [ "$3" = "" ]; then                 # If ssh key is an empty string,
+    # Getting SSH keys from user
+    echo -n "Enter full name of the user: "
+	read FULL_USERNAME
+else
+	FULL_USERNAME=$3
+fi
 
-valid='s[1-9][0-9][meca][semi][0-9][0-9][0-9]' # regex for valid username
-if [[ ! $1 =~ $valid ]]; then
+student='s[1-9][0-9][meca][semi][0-9][0-9][0-9]' # regex for valid student username
+faculty='f[0-9][0-9][0-9][0-9]' # regex for valid faculty ID
+if [[ ! $1 =~ $student && ! $1 =~ $faculty ]]; then
 	echo "Invalid username, exiting..."
 	exit	# exit if the username is invalid
 fi
@@ -31,10 +48,6 @@ if [ "$USER" != "root" ]; then
 	echo "Script not running as root, exiting..."
 	exit
 fi
-
-# Input user full name
-echo -n "Enter full name of the user: "
-read FULL_USERNAME
 
 # Create new user with home directory
 useradd -m $1 --comment "$FULL_USERNAME"
@@ -50,4 +63,4 @@ rGID=$(id $1 -g)
 $MOD_DIR/ldif_editors/genLDIF.sh $1 $rUID $rGID
 
 # Generate and add ssh-keys for new user
-$MOD_DIR/ssh-keymgmt/gen_newuser_keys.sh $1 $rUID $rGID
+$MOD_DIR/ssh-keymgmt/gen_newuser_keys.sh -i $1 -u $rUID -g $rGID -k $ssh_key

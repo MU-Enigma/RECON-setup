@@ -10,7 +10,26 @@
 # $3 - GID
 # SSH_DIR - /home/$1/.ssh
 
-SSH_DIR=/home/$1/.ssh
+while getopts ":k:" options; do
+    case "${options}" in 
+        i)
+            username=${OPTARG}
+            ;;
+        k)
+            ssh_key=${OPTARG}
+            ;;
+        u)
+            rUID=${OPTARG}
+            ;;
+        g)
+            rGID=${OPTARG}
+            ;;
+        :)
+            echo "unknown FLAG error"
+            ;;
+    esac
+done
+SSH_DIR=/home/$username/.ssh
 
 # Making a new ssh directory
 mkdir $SSH_DIR
@@ -22,14 +41,15 @@ ssh-keygen -t ed25519 -f $SSH_DIR/id_ed25519 -q -N ""
 # Adding the public key of new keys for inter-node access
 cat $SSH_DIR/id_ed25519.pub > $SSH_DIR/authorized_keys
 
-# Getting SSH keys from user
-echo -n "Enter user's SSH keys: "
-read user_sshkeys
+if [ "$ssh_key" = "" ]; then                 # If $NAME is an empty string,
+    # Getting SSH keys from user
+    echo -n "Enter user's SSH keys: "
+    read ssh_key
 
 # Adding user keys to username for easy access
-echo $user_sshkeys >> $SSH_DIR/authorized_keys
+echo $ssh_key >> $SSH_DIR/authorized_keys
 
-echo "Added keys for user $1!"
+echo "Added keys for user $username!"
 
 # Changing file permissions to ensure proper access
-chown -R $2:$3 $SSH_DIR
+chown -R $rUID:$rGID $SSH_DIR
