@@ -17,7 +17,7 @@ MOD_DIR=/usr/local/sbin/useradd_mod
 
 # Check if the username was provided
 if ! [ -n "$1" ]; then
-	echo "No username provided, exiting..."
+	echo "No username provided, exiting..." 
 	exit
 fi
 if [ "$2" = "" ]; then                 # If ssh key is an empty string,
