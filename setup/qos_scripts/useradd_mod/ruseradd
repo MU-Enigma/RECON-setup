@@ -15,38 +15,58 @@
 # $4 - group of the user
 
 MOD_DIR=/usr/local/sbin/useradd_mod
+while getopts ":k:i:n:u:" options; do
+    case "${options}" in 
+        i)
+            username=${OPTARG}
+            ;;
+        k)
+            ssh_key=${OPTARG}
+            ;;
+        g)
+            group=${OPTARG}
+            ;;
+        n)
+            name=${OPTARG}
+            ;;
+        :)
+            echo "unknown FLAG error"
+            ;;
+    esac
+done
 
-if id "$1" &>/dev/null; then
+if id "$username" &>/dev/null; then
     echo 'user found'
 	echo 'quitting...'
 	exit
 else
-    echo "creating user $1 with username $3"
+    echo "creating user $username with username $name"
 fi
 
 # Check if the username was provided
-if ! [ -n "$1" ]; then
-	echo "No username provided, exiting..." 
-	exit
+if ! [ -n "$username" ]; then
+	echo "No username provided"
+    echo -n "Enter username: "
+    read username
 fi
-if [ "$2" = "" ]; then                 # If ssh key is an empty string,
+if [ "$ssh_key" = "" ]; then                 # If ssh key is an empty string,
     # Getting SSH keys from user
     echo -n "Enter user's SSH keys: "
     read ssh_key
 else                                      # Otherwise,
-	ssh_key=$2
+	ssh_key=$ssh_key
 fi
-if [ "$3" = "" ]; then                 # If ssh key is an empty string,
+if [ "$name" = "" ]; then                 # If ssh key is an empty string,
     # Getting SSH keys from user
     echo -n "Enter full name of the user: "
 	read FULL_USERNAME
 else
-	FULL_USERNAME=$3
+	FULL_USERNAME=$name
 fi
 
 student='s[1-9][0-9][meca][semic][0-9][0-9][0-9]' # regex for valid student username
 faculty='f[0-9][0-9][0-9][0-9]' # regex for valid faculty ID
-if [[ ! $1 =~ $student && ! $1 =~ $faculty ]]; then
+if [[ ! $username =~ $student && ! $username =~ $faculty ]]; then
 	echo "Invalid username, exiting..."
 	exit	# exit if the username is invalid
 fi
@@ -59,20 +79,17 @@ if [ "$USER" != "root" ]; then
 fi
 
 # Create new user with home directory
-useradd -m $1 --comment "$FULL_USERNAME"
+useradd -m $username --comment "$FULL_USERNAME"
 
 # Change home permission to 750 for increased privacy
-chmod 750 /home/$1
+chmod 750 /home/$username
 
 # Get new UID and GID
-rUID=$(id $1 -u)
-rGID=$(id $1 -g)
-
-#adding the user to the given group
-uaermod -aG $4 $1
+rUID=$(id $username -u)
+rGID=$(id $username -g)
 
 # Add user to LDAP
-$MOD_DIR/ldif_editors/genLDIF.sh $1 $rUID $rGID
+$MOD_DIR/ldif_editors/genLDIF.sh $username $rUID $rGID
 
 # Generate and add ssh-keys for new user
-$MOD_DIR/ssh-keymgmt/gen_newuser_keys.sh -i $1 -u $rUID -g $rGID -k $ssh_key
+$MOD_DIR/ssh-keymgmt/gen_newuser_keys.sh -i $username -u $rUID -g $rGID -k $ssh_key

@@ -10,7 +10,7 @@
 # $3 - GID
 # SSH_DIR - /home/$1/.ssh
 
-while getopts ":k:" options; do
+while getopts ":k:i:u:G:" options; do
     case "${options}" in 
         i)
             username=${OPTARG}
@@ -21,7 +21,7 @@ while getopts ":k:" options; do
         u)
             rUID=${OPTARG}
             ;;
-        g)
+        G)
             rGID=${OPTARG}
             ;;
         :)
