@@ -11,7 +11,6 @@
 # SSH_DIR - /home/$1/.ssh
 echo "$1 $2 $3 $4 $5 $6 $7 $8"
 while getopts ":i:k:u:G:" options; do
-    echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     echo $OPTARG
     case "${options}" in 
         i)
@@ -32,7 +31,6 @@ while getopts ":i:k:u:G:" options; do
             ;;
     esac
 done
-echo "hi"
 SSH_DIR=/home/$username/.ssh
 
 # Making a new ssh directory

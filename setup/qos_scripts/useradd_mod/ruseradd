@@ -91,4 +91,4 @@ rGID=$(id $username -g)
 $MOD_DIR/ldif_editors/genLDIF.sh $username $rUID $rGID
 
 # Generate and add ssh-keys for new user
-./gen_newuser_keys.sh -i $username -u $rUID -g $rGID -k "$SSH_KEY"
+gen_newuser_keys.sh -i $username -u $rUID -g $rGID -k "$SSH_KEY"

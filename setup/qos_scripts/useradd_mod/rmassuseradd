@@ -23,5 +23,5 @@ do
 	userid=$(printf '%s\n' "$data" | cut -d\, -f1)
 	user_name=$(printf '%s\n' "$data" | cut -d\, -f2)
 	ssh_key=$(printf '%s\n' "$data" | cut -d\, -f3)
-	./ruseradd "$userid" "$user_name" "$ssh_key" "$group"
+	ruseradd "$userid" "$user_name" "$ssh_key" "$group"
 done < $csvpath
