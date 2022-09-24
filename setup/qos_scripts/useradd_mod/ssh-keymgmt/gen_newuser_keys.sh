@@ -9,8 +9,31 @@
 # $2 - UID
 # $3 - GID
 # SSH_DIR - /home/$1/.ssh
-
-SSH_DIR=/home/$1/.ssh
+echo "$1 $2 $3 $4 $5 $6 $7 $8"
+while getopts ":i:k:u:G:" options; do
+    echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    echo $OPTARG
+    case "${options}" in 
+        i)
+            username=${OPTARG}
+            ;;
+        k)
+            SSH_KEY=${OPTARG}
+	    echo "gen_new $SSH_KEY"
+            ;;
+        u)
+            rUID=${OPTARG}
+            ;;
+        G)
+            rGID=${OPTARG}
+            ;;
+        :)
+            echo "unknown FLAG error"
+            ;;
+    esac
+done
+echo "hi"
+SSH_DIR=/home/$username/.ssh
 
 # Making a new ssh directory
 mkdir $SSH_DIR
@@ -22,14 +45,18 @@ ssh-keygen -t ed25519 -f $SSH_DIR/id_ed25519 -q -N ""
 # Adding the public key of new keys for inter-node access
 cat $SSH_DIR/id_ed25519.pub > $SSH_DIR/authorized_keys
 
-# Getting SSH keys from user
-echo -n "Enter user's SSH keys: "
-read user_sshkeys
+echo "Hi send help: $SSH_KEY"
+echo "Am I used?"
+if ! [ -n "$SSH_KEY" ]; then                 # If ssh key is an empty string,
+    # Getting SSH keys from user
+    echo -n "Enter user's SSH keys please: "
+    read SSH_KEY
+fi
 
 # Adding user keys to username for easy access
-echo $user_sshkeys >> $SSH_DIR/authorized_keys
+echo $SSH_KEY >> $SSH_DIR/authorized_keys
 
-echo "Added keys for user $1!"
+echo "Added keys for user $username!"
 
 # Changing file permissions to ensure proper access
-chown -R $2:$3 $SSH_DIR
+chown -R $rUID:$rGID $SSH_DIR
