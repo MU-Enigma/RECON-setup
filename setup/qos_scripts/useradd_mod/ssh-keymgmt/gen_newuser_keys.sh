@@ -18,7 +18,6 @@ while getopts ":i:k:u:G:" options; do
             ;;
         k)
             SSH_KEY=${OPTARG}
-	    echo "gen_new $SSH_KEY"
             ;;
         u)
             rUID=${OPTARG}
@@ -43,8 +42,6 @@ ssh-keygen -t ed25519 -f $SSH_DIR/id_ed25519 -q -N ""
 # Adding the public key of new keys for inter-node access
 cat $SSH_DIR/id_ed25519.pub > $SSH_DIR/authorized_keys
 
-echo "Hi send help: $SSH_KEY"
-echo "Am I used?"
 if ! [ -n "$SSH_KEY" ]; then                 # If ssh key is an empty string,
     # Getting SSH keys from user
     echo -n "Enter user's SSH keys please: "

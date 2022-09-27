@@ -22,7 +22,6 @@ while getopts ":k:i:n:u:" options; do
             ;;
         k)
             SSH_KEY=${OPTARG}
-	    echo $SSH_KEY
             ;;
         g)
             group=${OPTARG}
@@ -35,7 +34,7 @@ while getopts ":k:i:n:u:" options; do
             ;;
     esac
 done
-echo "ooooo $SSH_KEY"
+
 if id "$username" &>/dev/null; then
 	echo 'user found'
 	echo 'quitting...'
@@ -52,7 +51,7 @@ if ! [ -n "$username" ]; then
 fi
 if ! [ -n "$SSH_KEY" ]; then                 # If ssh key is an empty string,
     # Getting SSH keys from user
-    echo -n "Enter user's SSH keys:324 "
+    echo -n "Enter user's SSH keys: "
     read SSH_KEY
 fi
 if [ "$name" = "" ]; then                 # If ssh key is an empty string,
