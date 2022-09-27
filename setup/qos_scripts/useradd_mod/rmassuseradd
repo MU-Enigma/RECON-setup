@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# File to be placed in /usr/local/sbin/
+# Custom script to onboard new users onto RECON
+# Funtions:
+#	- 
+# Author: Gurram Siddarth Reddy
+# Last modified: 29th Aug, 2022
+
+# $1 - csvpath
+# $2 - group name
+csvpath=$1 
+csvfile=$(basename "$csvpath")
+extension="${csvfile##*.}"
+if [ "$extension" != "csv" ]; then
+	echo "NOT A CSV FILE , EXITING........"
+	exit
+fi
+
+#group=$2
+while IFS="" read -r data || [ -n "$data" ]
+do
+	userid=$(printf '%s\n' "$data" | cut -d\, -f1)
+	user_name=$(printf '%s\n' "$data" | cut -d\, -f2)
+	ssh_key=$(printf '%s\n' "$data" | cut -d\, -f3)
+	ruseradd "$userid" "$user_name" "$ssh_key" "$group"
+done < $csvpath
