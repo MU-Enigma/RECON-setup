@@ -10,7 +10,7 @@
 # Last modified: 4th Aug, 2022
 
 # $1 - username
-# $2 - ssh key
+# $2 - ssh key 
 # $3 - Name of the user
 # $4 - group of the user
 

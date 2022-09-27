@@ -9,7 +9,7 @@
 
 # $1 - csvpath
 # $2 - group name
-csvpath=$1
+csvpath=$1 
 csvfile=$(basename "$csvpath")
 extension="${csvfile##*.}"
 if [ "$extension" != "csv" ]; then
